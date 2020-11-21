@@ -22,5 +22,3 @@ budgetDay ${budgetDay} гривен
 `,
 arrExpensesLow  
 );
-
-//console.log (arrExpensesLow);
