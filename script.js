@@ -1,6 +1,4 @@
 'use strict';
-// 10) Проверить, чтобы все работало и не было ошибок в консоли
-// 11) Добавить папку с третьим уроком в свой репозиторий на GitHub
 
 let money = 0,
     income = 'Фриланс',
@@ -31,7 +29,7 @@ if (isNaN(money)) {
     if (isNaN(amount2)) amount2 = 0;
 }
 
-const re = /\s*,\s*/; //регулярное выражение, чтобы выделить слова без пробелов вокруг, разделитель запятая
+const re = /\s*,\s*/;
 const arrExpensesLow = addExpenses.toLowerCase().split(re);
 
 budgetMonth = money - amount1 - amount2;
