@@ -56,10 +56,8 @@ if (budgetDay >= 1200) console.log('У Вас высокий уровень до
         else if (budgetDay > 0 && budgetDay <= 600) console.log('К сожалению у Вас уровень дохода ниже среднего');
             else if (budgetDay <= 0) console.log('Что-то пошло не так!');
 
-let richTarget = 0;
-
 if (budgetMonth > 0) {
-    richTarget = Math.ceil(mission/budgetMonth);
+    let richTarget = Math.ceil(mission/budgetMonth);
     if (richTarget === 1) {
         console.log(`Цель будет достигнута за ${richTarget} месяц`);
     } else if (richTarget > 1 && richTarget <= 4) {
