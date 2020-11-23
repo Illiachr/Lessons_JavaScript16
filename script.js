@@ -9,22 +9,6 @@
 // 10) Проверить, чтобы все работало и не было ошибок в консоли
 // 11) Добавить папку с третьим уроком в свой репозиторий на GitHub
 
-switch (budgetDay) {
-    case budgetDay >= 1200:
-        alert('У Вас высокий уровень дохода');
-        break;
-    case budgetDay > 600 && budgetDay < 1200:
-        alert('У Вас средний уровень дохода');
-        break;
-    case budgetDay <= 600:
-        alert('К сожалению у Вас уровень дохода ниже среднего')
-        break;
-    case budgetDay <= 0 || budgetDay === NaN:
-        alert('Что-то пошло не так')
-        break;
-}
-
-
 let money = +prompt ('Ваш месячный доход?',30000),
     income = 'Фриланс',
     addExpenses = prompt ('Перечислите возможные расходы за рассчитываемый период через запятую', 'Интернет, Мобильный, Коммуналка'),
@@ -41,6 +25,25 @@ let money = +prompt ('Ваш месячный доход?',30000),
 const re = /\s*,\s*/; //регулярное выражение, чтобы выделить слова без пробелов вокруг, разделитель запятая
 
 const arrExpensesLow = addExpenses.toLowerCase().split(re);
+
+switch (budgetDay) {
+    case budgetDay >= 1200:
+        alert('У Вас высокий уровень дохода');
+        console.log('У Вас высокий уровень дохода');
+        break;
+    case budgetDay > 600 && budgetDay < 1200:
+        alert('У Вас средний уровень дохода');
+        console.log('У Вас средний уровень дохода');
+        break;
+    case budgetDay <= 600:
+        alert('К сожалению у Вас уровень дохода ниже среднего');
+        console.log('К сожалению у Вас уровень дохода ниже среднего');
+        break;
+    case budgetDay <= 0 || budgetDay === NaN:
+        alert('Что-то пошло не так');
+        console.log('Что-то пошло не так');
+        break;
+}
 
 console.log(
     `variable 'money' type is ${typeof money},
