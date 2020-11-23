@@ -29,16 +29,11 @@ if (isNaN(money)) {
     if (isNaN(amount2)) amount2 = 0;
 }
 
-const re = /\s*,\s*/;
+const re = /\s*,\s*/; //Выражение для того чтобы взять слова из строка без пробелов вокруг.
 const arrExpensesLow = addExpenses.toLowerCase().split(re);
 
 budgetMonth = money - amount1 - amount2;
 budgetDay = Math.floor(budgetMonth / 30);
-
-if (budgetDay >= 1200) alert('У Вас высокий уровень дохода');
-    else if (budgetDay > 600 && budgetDay < 1200) alert('У Вас средний уровень дохода');
-        else if (budgetDay > 0 && budgetDay <= 600) alert('К сожалению у Вас уровень дохода ниже среднего');
-            else if (budgetDay <= 0) alert('Что-то пошло не так!');
 
 console.log(
     `variable 'money' type is ${typeof money},
@@ -55,6 +50,11 @@ budgetDay = ${budgetDay} гривен
 `,
 arrExpensesLow  
 );
+
+if (budgetDay >= 1200) console.log('У Вас высокий уровень дохода');
+    else if (budgetDay > 600 && budgetDay < 1200) console.log('У Вас средний уровень дохода');
+        else if (budgetDay > 0 && budgetDay <= 600) console.log('К сожалению у Вас уровень дохода ниже среднего');
+            else if (budgetDay <= 0) console.log('Что-то пошло не так!');
 
 let richTarget = 0;
 
