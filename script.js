@@ -60,7 +60,7 @@ let appData = {
             if (this.richTarget > 0)    {
                 console.log (`Цель будет достигнута за ${this.richTarget} месяца`);
             } else {
-                console.log(`Цель не достижима! Необходимо получать доход`);
+                console.log(`Цель не достижима! Необходимо получать доход :(`);
             }
         },
         
@@ -76,13 +76,9 @@ appData.budget = parseFloat(money);
 appData.asking();
 appData.getExpensesMonth();
 appData.getBudget();
-
-
 console.log (`Расходы за месяц: ${appData.expensesMonth} гривен`);
 appData.getTargetMonth();
-//console.log (`Цель будет достигнута за ${appData.richTarget} месяцев`);
 console.log(appData.getStatusIncome());
-
 console.log (`
 ------------------------------------------------
 Наша программа включает в себя следующие данные:
