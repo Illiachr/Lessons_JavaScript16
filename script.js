@@ -29,8 +29,10 @@ let appData = {
         Expenses        : {},
         addExpenses     : [],
         deposit         : false,
-        mission         : 100000,
+        depositSum      : 0,
+        depositPercent  : 0,        
         period          : 12,
+        mission         : 100000,
         budgetDay       : 0,
         budgetMonth     : 0,
         expensesMonth   : 0,
@@ -38,22 +40,21 @@ let appData = {
         
         asking () {
             if (confirm ('Есть ли у Вас дополнительный заработок?')){
-                let key = askDataStr('Какой у Вас есть дополнительный заработок?', 'Сдаю квартиру', 0);
-                this.income[key] = +askDataNum ('Какой доход от дополнительного заработка?', '5000');
+                let key = askDataStr('Какой у Вас есть дополнительный заработок?', 'Сдаю квартиру');
+                this.income[key] = +askDataNum ('Какой доход от дополнительного заработка?', 5000);
             }
-            this.addExpenses = prompt ('Перечислите возможные расходы за рассчитываемый период через запятую', 
+            this.addExpenses = askDataStr('Перечислите возможные расходы за рассчитываемый период через запятую', 
             'Интернет, Мобильный, Коммуналка')
             .toLowerCase().split(',')
             .map(item => item = item.trim());
             this.deposit = confirm ('Есть ли у вас депозит в банке?', false);
-
             let i = 0;
             let key = '';
-            for (i ; i < 4; i++) {
-                key = prompt ('Введите обязательную статью расходов');
-                do {
-                    this.Expenses[key] = prompt ('Во сколько это обойдется', '0');
-                } while (!isNumber(this.Expenses[key]));
+            key = askDataStr ('Введите обязательную статью расходов');
+            this.Expenses[key] = askDataNum ('Во сколько это обойдется', '0');
+            if (confirm ('Хотите добавить ещё?')) {
+                key = askDataStr ('Введите обязательную статью расходов');
+                this.Expenses[key] = askDataNum ('Во сколько это обойдется', '0');
             }
         },
 
@@ -65,7 +66,7 @@ let appData = {
         
         getBudget () {
             this.budgetMonth = this.budget - this.expensesMonth;
-            this.budgetDay = Math.floor(appData.budgetMonth/30);
+            this.budgetDay = Math.floor(this.budgetMonth/30);
         },
         
         getTargetMonth () {                
@@ -82,7 +83,15 @@ let appData = {
                 appData.budgetDay > 600 && appData.budgetDay < 1200 ? 'У Вас средний уровень дохода' :
                 appData.budgetDay > 0 && appData.budgetDay <= 600 ? 
                 'К сожалению у Вас уровень дохода ниже среднего' : 'Что-то пошло не так!';
-        }        
+        },
+
+        getInfoDeposit () {
+            if (this.deposit) {
+                this.depositSum = +askDataNum('Добавьте сумму депозита (грн)', 0);
+                this.depositPercent = +askDataNum('Добавьте ставку по депозиту (%)', 2);
+            }
+        }
+
     };
 
 const start = (() => {        
@@ -108,7 +117,7 @@ for (let key in appData) {
     {
         if (key === 'income' || key === 'Expenses') {
             console.log(`${key} : `);
-            console.log(appData[key]);
+            console.log(appData[key].map(item => item[0] = item.toUpperCase).join(', '));
             
         } else{
             console.log(`${key} : ${appData[key]}`);
