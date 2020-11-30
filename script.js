@@ -2,17 +2,25 @@
 
 const isNumber = ((x) => {
     return !isNaN(parseFloat(x)) && isFinite(parseFloat(x));
-});
+    }), 
+// Функция запроса данных от пользователя
+    askDataNum = ((askQuestion, defAnswer) => { 
+        let result;        
+            result = prompt (askQuestion, defAnswer);
+            if (result <= 0 || !isNumber(result)) {
+                return askDataNum(askQuestion, 'Введите число');
+            } else {
+                return result;
+            }               
+    }),
+    askDataStr = ((askQuestion, defAnswer) => { 
+        let result = prompt (askQuestion, defAnswer);
+        if (isNumber(result) || result.trim() < 1 || result.trim() === 'Введите строку') {
+            return askDataStr(askQuestion, 'Введите строку');
+        }
+        return result;
 
-let money,
-    start = (() => {
-        do {
-            money = prompt('Ваш месячный доход?','30000');
-        } while (!isNumber(money));
-        money = parseFloat(money);
     });
-
-start();
 
 let appData = {
         budget          : 0,
@@ -27,7 +35,12 @@ let appData = {
         budgetMonth     : 0,
         expensesMonth   : 0,
         richTarget      : 0,
+        
         asking () {
+            if (confirm ('Есть ли у Вас дополнительный заработок?')){
+                let key = askDataStr('Какой у Вас есть дополнительный заработок?', 'Сдаю квартиру', 0);
+                this.income[key] = +askDataNum ('Какой доход от дополнительного заработка?', '5000');
+            }
             this.addExpenses = prompt ('Перечислите возможные расходы за рассчитываемый период через запятую', 
             'Интернет, Мобильный, Коммуналка')
             .toLowerCase().split(',')
@@ -72,13 +85,19 @@ let appData = {
         }        
     };
 
-appData.budget = parseFloat(money);
-appData.asking();
-appData.getExpensesMonth();
-appData.getBudget();
-console.log (`Расходы за месяц: ${appData.expensesMonth} гривен`);
-appData.getTargetMonth();
-console.log(appData.getStatusIncome());
+const start = (() => {        
+    appData.budget = +askDataNum('Ваш месячный доход?', '30000');
+    appData.asking();
+    appData.getExpensesMonth();
+    appData.getBudget();
+    console.log (`Расходы за месяц: ${appData.expensesMonth} гривен`);
+    appData.getTargetMonth();
+    console.log(appData.getStatusIncome());
+
+});
+
+start();
+
 console.log (`
 ------------------------------------------------
 Наша программа включает в себя следующие данные:
@@ -93,6 +112,7 @@ for (let key in appData) {
             
         } else{
             console.log(`${key} : ${appData[key]}`);
+        console.log ('------------------------------------------------');
         }
     }
 }
