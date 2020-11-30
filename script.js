@@ -123,6 +123,6 @@ for (let key in appData) {
         } else{
             console.log(`${key} : ${appData[key]}`);
         console.log ('------------------------------------------------');
-        }
+        }        
     }
 }
