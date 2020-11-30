@@ -15,11 +15,12 @@ const isNumber = ((x) => {
     }),
     askDataStr = ((askQuestion, defAnswer) => { 
         let result = prompt (askQuestion, defAnswer);
-        if (isNumber(result) || result.trim() < 1 || result.trim() === 'Введите строку') {
+        if (!isNaN(+result) || 
+            result.trim() < 1 || 
+            result.trim() === 'Введите строку') {
             return askDataStr(askQuestion, 'Введите строку');
         }
         return result;
-
     });
 
 let appData = {
@@ -48,14 +49,11 @@ let appData = {
             .toLowerCase().split(',')
             .map(item => item = item.trim());
             this.deposit = confirm ('Есть ли у вас депозит в банке?', false);
-            let i = 0;
-            let key = '';
-            key = askDataStr ('Введите обязательную статью расходов');
-            this.Expenses[key] = askDataNum ('Во сколько это обойдется', '0');
-            if (confirm ('Хотите добавить ещё?')) {
-                key = askDataStr ('Введите обязательную статью расходов');
+            appData.getInfoDeposit();
+            do {
+                let key = askDataStr ('Введите обязательную статью расходов');
                 this.Expenses[key] = askDataNum ('Во сколько это обойдется', '0');
-            }
+            } while (confirm ('Хотите добавить ещё?'));
         },
 
         getExpensesMonth () {
@@ -70,12 +68,7 @@ let appData = {
         },
         
         getTargetMonth () {                
-            this.richTarget = Math.ceil(this.mission/this.budgetMonth);
-            if (this.richTarget > 0)    {
-                console.log (`Цель будет достигнута за ${this.richTarget} месяца`);
-            } else {
-                console.log(`Цель не достижима! Необходимо получать доход :(`);
-            }
+            this.richTarget = this.mission/this.budgetMonth;
         },
         
         getStatusIncome () {
@@ -101,12 +94,21 @@ const start = (() => {
     appData.getBudget();
     console.log (`Расходы за месяц: ${appData.expensesMonth} гривен`);
     appData.getTargetMonth();
+    if (appData.richTarget > 0)    {
+        console.log (`Цель будет достигнута за ${Math.ceil(appData.richTarget)} месяца`);
+    } else {
+        console.log(`Цель не достижима! Необходимо получать доход :(`);
+    }
     console.log(appData.getStatusIncome());
-
 });
 
 start();
 
+console.log('Дополнительные расходы (addExpenses):',
+    appData.addExpenses
+    .map((item) => item[0].toUpperCase() + item.slice(1))
+    .join(', '));
+console.log(appData.addExpenses);
 console.log (`
 ------------------------------------------------
 Наша программа включает в себя следующие данные:
@@ -115,10 +117,9 @@ console.log (`
 for (let key in appData) {
     if (appData.hasOwnProperty(key))
     {
-        if (key === 'income' || key === 'Expenses') {
+        if (key === 'Expenses') {
             console.log(`${key} : `);
-            console.log(appData[key].map(item => item[0] = item.toUpperCase).join(', '));
-            
+            console.log(appData[key]);            
         } else{
             console.log(`${key} : ${appData[key]}`);
         console.log ('------------------------------------------------');
