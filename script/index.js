@@ -22,7 +22,8 @@ let startBtn = document.getElementById('start'),
     targetAmount = document.querySelector('.target-amount'),
     periodSelect = document.querySelector('.period-select'),
     periodAmount = document.querySelector('.period-amount'),
-    budgetMonthValue = document.querySelector('.budget_month-value');
+    budgetMonthValue = document.querySelector('.budget_month-value'),
+    depositСalc = document.querySelectorAll('.deposit-calc');
 
 const isNumber = (x) => {
     return !isNaN(parseFloat(x)) && isFinite(parseFloat(x));
@@ -94,6 +95,9 @@ let appData = {
         
         addExpensesBlock () { 
             let cloneExpensesItem = expensesItems[0].cloneNode(true);
+            let cloneChildNodes = cloneExpensesItem.childNodes;
+            cloneChildNodes[1].value = '';
+            cloneChildNodes[3].value = '';
             expensesItems[0].parentNode.insertBefore(cloneExpensesItem, expensesAdd);
             expensesItems = document.querySelectorAll('.expenses-items');
 
@@ -104,6 +108,9 @@ let appData = {
 
         addIncomeBlock() {
             let cloneItem = incomeItems[0].cloneNode(true);
+            let cloneChildNodes = cloneItem.childNodes;
+            cloneChildNodes[1].value = '';
+            cloneChildNodes[3].value = '';
             incomeItems[0].parentNode.insertBefore(cloneItem,incomeAdd);
 
             incomeItems = document.querySelectorAll('.income-items');
@@ -191,8 +198,11 @@ let appData = {
 startBtn.addEventListener('click', event => {
     event.preventDefault();
     if(salaryAmount.value === '' || !isNumber(salaryAmount.value)) {
+        startBtn.disabled = true;
         alert('Ошибка! Поле "Месячный доход" должно быть заполнено!');
+
     } else {
+        startBtn.disabled = true;
     appData.start();
     }
 });
@@ -207,9 +217,78 @@ incomeAdd.addEventListener('click', event => {
     appData.addIncomeBlock();
 });
 
+const regInputSum = /[^\d]/g,
+    regInputDescr =  /[^а-я]/;
+
 
 periodSelect.addEventListener('input', event => {
     event.preventDefault();
     appData.period = periodSelect.value;
     periodAmount.textContent = appData.period;    
+});
+//---------------------- salaryAmount---------------------------
+salaryAmount.addEventListener('input', () => {
+    salaryAmount.value = salaryAmount.value.replace(regInputSum, '');
+});
+//---------------------- incomeItems----------------------------
+incomeItems[0].childNodes[1].addEventListener('input', () => {
+    incomeItems[0].childNodes[1].value = incomeItems[0].childNodes[1].value.replace(regInputDescr, '');
+});
+
+incomeItems[0].childNodes[3].addEventListener('input', () => {
+    incomeItems[0].childNodes[3].value = incomeItems[0].childNodes[3].value.replace(regInputSum, '');
+});
+
+incomeAdd.addEventListener('click', () => {
+    incomeItems.forEach(item => {
+        item.childNodes[1].addEventListener('input', () => {
+            item.childNodes[1].value = item.childNodes[1].value.replace(regInputDescr, '');
+        });
+        item.childNodes[3].addEventListener('input', () => {
+            item.childNodes[3].value = item.childNodes[3].value.replace(regInputSum, '');
+        });
+    });
+});
+//---------------------- additionalIncome-----------------------
+additionalIncome.forEach(item => {
+    item.addEventListener('input', () => {
+        item.value = item.value.replace(regInputDescr, '');
+    });
+});
+
+//---------------------- expensesItems--------------------------
+
+expensesItems[0].childNodes[1].addEventListener('input', () => {
+    expensesItems[0].childNodes[1].value = expensesItems[0].childNodes[1].value.replace(regInputDescr, '');
+});
+
+expensesItems[0].childNodes[3].addEventListener('input', () => {
+    expensesItems[0].childNodes[3].value = expensesItems[0].childNodes[3].value.replace(regInputSum, '');
+});
+
+expensesAdd.addEventListener('click', () => {
+    expensesItems.forEach(item => {
+        item.childNodes[1].addEventListener('input', () => {
+            item.childNodes[1].value = item.childNodes[1].value.replace(regInputDescr, '');
+        });
+        item.childNodes[3].addEventListener('input', () => {
+            item.childNodes[3].value = item.childNodes[3].value.replace(regInputSum, '');
+        });
+    });
+});
+//---------------------- additionalExpenses-------------------
+additionalExpenses.addEventListener('input', () => {
+    additionalExpenses.value = additionalExpenses.value.replace(regInputDescr, '');
+});
+//---------------------- depositСalc--------------------------
+depositСalc[0].childNodes[1].addEventListener('input', () => {
+    depositСalc[0].childNodes[1].value = depositСalc[0].childNodes[1].value.replace(regInputSum, '');
+});
+
+depositСalc[0].childNodes[3].addEventListener('input', () => {
+    depositСalc[0].childNodes[3].value = depositСalc[0].childNodes[3].value.replace(regInputSum, '');
+});
+//---------------------- targetAmount--------------------------
+targetAmount.addEventListener('input', () => {
+    targetAmount.value = targetAmount.value.replace(regInputSum, '');
 });
