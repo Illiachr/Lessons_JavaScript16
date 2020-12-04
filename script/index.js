@@ -1,4 +1,8 @@
 'use strict';
+
+const regInputSum = /[^\d]/g,
+    regInputDescr =  /[^а-я]/;
+
 let startBtn = document.getElementById('start'),
     buttons = document.getElementsByTagName('button'),
         incomeAdd = buttons[0],
@@ -210,16 +214,28 @@ startBtn.addEventListener('click', event => {
 expensesAdd.addEventListener('click', event => {
     event.preventDefault();
     appData.addExpensesBlock();
+    expensesItems.forEach(item => {
+        item.childNodes[1].addEventListener('input', () => {
+            item.childNodes[1].value = item.childNodes[1].value.replace(regInputDescr, '');
+        });
+        item.childNodes[3].addEventListener('input', () => {
+            item.childNodes[3].value = item.childNodes[3].value.replace(regInputSum, '');
+        });
+    });
 });
 
 incomeAdd.addEventListener('click', event => {
     event.preventDefault();
     appData.addIncomeBlock();
+    incomeItems.forEach(item => {
+        item.childNodes[1].addEventListener('input', () => {
+            item.childNodes[1].value = item.childNodes[1].value.replace(regInputDescr, '');
+        });
+        item.childNodes[3].addEventListener('input', () => {
+            item.childNodes[3].value = item.childNodes[3].value.replace(regInputSum, '');
+        });
+    });
 });
-
-const regInputSum = /[^\d]/g,
-    regInputDescr =  /[^а-я]/;
-
 
 periodSelect.addEventListener('input', event => {
     event.preventDefault();
@@ -240,14 +256,7 @@ incomeItems[0].childNodes[3].addEventListener('input', () => {
 });
 
 incomeAdd.addEventListener('click', () => {
-    incomeItems.forEach(item => {
-        item.childNodes[1].addEventListener('input', () => {
-            item.childNodes[1].value = item.childNodes[1].value.replace(regInputDescr, '');
-        });
-        item.childNodes[3].addEventListener('input', () => {
-            item.childNodes[3].value = item.childNodes[3].value.replace(regInputSum, '');
-        });
-    });
+    
 });
 //---------------------- additionalIncome-----------------------
 additionalIncome.forEach(item => {
@@ -255,7 +264,6 @@ additionalIncome.forEach(item => {
         item.value = item.value.replace(regInputDescr, '');
     });
 });
-
 //---------------------- expensesItems--------------------------
 
 expensesItems[0].childNodes[1].addEventListener('input', () => {
@@ -266,16 +274,6 @@ expensesItems[0].childNodes[3].addEventListener('input', () => {
     expensesItems[0].childNodes[3].value = expensesItems[0].childNodes[3].value.replace(regInputSum, '');
 });
 
-expensesAdd.addEventListener('click', () => {
-    expensesItems.forEach(item => {
-        item.childNodes[1].addEventListener('input', () => {
-            item.childNodes[1].value = item.childNodes[1].value.replace(regInputDescr, '');
-        });
-        item.childNodes[3].addEventListener('input', () => {
-            item.childNodes[3].value = item.childNodes[3].value.replace(regInputSum, '');
-        });
-    });
-});
 //---------------------- additionalExpenses-------------------
 additionalExpenses.addEventListener('input', () => {
     additionalExpenses.value = additionalExpenses.value.replace(regInputDescr, '');
