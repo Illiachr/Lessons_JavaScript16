@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', () => {
     'use strict';
 
     const regInputSum = /[^\d]/g,
-        regInputDescr =  /[^аА-яёЯЁы, ]/;
+        regInputDescr =  /[^аА-яёЯЁ, ]/;
 
     const startBtn = document.getElementById('start'),
         cancelBtn = document.querySelector('#cancel'),
@@ -194,6 +194,19 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const reset = () => {
+        const defaults = {
+            '[object Object]': {},
+            '[object Array]': [],
+            '[object String]': '',
+            '[object Boolean]': false,
+            '[object Number]': 0
+        };        
+        for (let key in appData){
+            if (appData.hasOwnProperty(key)) {
+                if (key === 'start') { break; }
+                    appData[key] = defaults[Object.prototype.toString.call(appData[key])];
+            }
+        }
         document.querySelectorAll('.data input[type="text"]').forEach(
             item => item.disabled = false
         );
@@ -202,6 +215,7 @@ document.addEventListener('DOMContentLoaded', () => {
         );
         cancelBtn.style.display = 'none';
         startBtn.style.display = 'block';
+        console.log(appData);
     };
 
     const validateInput = () => {
