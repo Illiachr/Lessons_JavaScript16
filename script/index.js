@@ -35,25 +35,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const isNumber = (x) => {
         return !isNaN(parseFloat(x)) && isFinite(parseFloat(x));
         };
-    // // Функция запроса данных от пользователя
-    //     askDataNum = (askQuestion, defAnswer) => { 
-    //         let result;        
-    //             result = prompt (askQuestion, defAnswer);
-    //             if (result <= 0 || !isNumber(result)) {
-    //                 return askDataNum(askQuestion, 'Введите число');
-    //             } else {
-    //                 return result;
-    //             }               
-    //     },
-    //     askDataStr = (askQuestion, defAnswer) => { 
-    //         let result = prompt (askQuestion, defAnswer);
-    //         if (!isNaN(+result) || 
-    //             result.trim() < 1 || 
-    //             result.trim() === 'Введите строку') {
-    //             return askDataStr(askQuestion, 'Введите строку');
-    //         }
-    //         return result;
-    //     };
 
     const appData = {
             budget          : 0,
@@ -68,6 +49,21 @@ document.addEventListener('DOMContentLoaded', () => {
             budgetMonth     : 0,
             expensesMonth   : 0,
             incomeMonth     : 0,
+
+            start () {
+                this.budget = +salaryAmount.value;
+        
+                this.getExpenses();
+                this.getIncome();            
+                this.getExpensesMonth();
+                this.getAddExpenses();
+                this.getAddIncome();
+                this.getBudget();
+                this.getInfoDeposit();
+        
+                this.showResult();
+                console.log(this);
+            },
             
             showResult () {
                 budgetMonthValue.value = appData.budget;
@@ -189,24 +185,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 return this.budgetMonth*periodSelect.value;
             }
         };
-    function start () {
-        this.budget = +salaryAmount.value;
-
-        this.getExpenses();
-        this.getIncome();            
-        this.getExpensesMonth();
-        this.getAddExpenses();
-        this.getAddIncome();
-        this.getBudget();
-        this.getInfoDeposit();
-
-        this.showResult();
-
-        const inputData = document.querySelectorAll('.data input[type="text"]');
-        inputData.forEach(item => item.disabled = true);
-        startBtn.style.display = 'none';
-        cancelBtn.style.display = 'block';
-    }
 
     const reset = () => {
         document.querySelectorAll('.data input[type="text"]').forEach(
@@ -257,7 +235,12 @@ document.addEventListener('DOMContentLoaded', () => {
             alert('Ошибка! Поле "Месячный доход" должно быть заполнено!');
             return;
         } 
-        start.apply (appData);
+        appData.start();
+        document.querySelectorAll('.data input[type="text"]').forEach(
+            item => item.disabled = true
+        );
+        startBtn.style.display = 'none';
+        cancelBtn.style.display = 'block';
     });
 
     salaryAmount.addEventListener('click', () => {
@@ -270,27 +253,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     expensesAdd.addEventListener('click', () => {
         appData.addExpensesBlock();
-        expensesItems.forEach(item => {
-            item.childNodes[1].addEventListener('input', () => {
-                item.childNodes[1].value = item.childNodes[1].value.replace(regInputDescr, '');
-            });
-            item.childNodes[3].addEventListener('input', () => {
-                item.childNodes[3].value = item.childNodes[3].value.replace(regInputSum, '');
-            });
-        });
+        validateInput();
     });
 
 
     incomeAdd.addEventListener('click', () => {
         appData.addIncomeBlock();
-        incomeItems.forEach(item => {
-            item.childNodes[1].addEventListener('input', () => {
-                item.childNodes[1].value = item.childNodes[1].value.replace(regInputDescr, '');
-            });
-            item.childNodes[3].addEventListener('input', () => {
-                item.childNodes[3].value = item.childNodes[3].value.replace(regInputSum, '');
-            });
-        });
+        validateInput();
     });
 
     document.querySelector('.deposit-label').addEventListener('click', () => {
