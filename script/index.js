@@ -139,7 +139,6 @@ document.addEventListener('DOMContentLoaded', () => {
         },
 
         getAddExpenses () {
-            this.addExpenses = [];
             let addExpenses = additionalExpenses.value.split(',');
             addExpenses.forEach(item => {
                 item = item.trim();
@@ -150,7 +149,6 @@ document.addEventListener('DOMContentLoaded', () => {
         },
 
         getAddIncome () {
-            this.addIncome = [];
             additionalIncome.forEach((item) => {
                 let itemValue = item.value.trim().toLowerCase();
                 this.addIncome.push(itemValue);
@@ -213,6 +211,11 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelectorAll('.calc input[type="text"]').forEach(
             item => item.value = ''
         );
+        periodSelect.value = 1;
+        depositCheck.checked = false;
+        depositBank.style.display = 'none';
+        depositAmount.style.display = 'none';
+        depositPercent.style.display = 'none'; 
         cancelBtn.style.display = 'none';
         startBtn.style.display = 'block';
         console.log(appData);
