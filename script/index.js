@@ -235,8 +235,8 @@ document.addEventListener('DOMContentLoaded', () => {
             expensesAdd.removeAttribute('disabled');
             depositCheck.checked = false;
             depositBank.style.display = 'none';
-            depositAmount.removeAttribute('disabled');
-            depositPercent.removeAttribute('disabled');
+            depositAmount.style.display = 'none';
+            depositPercent.style.display = 'none';
         }
     };    
 
@@ -273,8 +273,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     startBtn.addEventListener('click', event => {
         event.preventDefault();
-        if(salaryAmount.value === '' || !isNumber(salaryAmount.value)) {
-            this.disabled = true;
+        if(salaryAmount.value === '') {
+            startBtn.disabled = true;
             alert('Ошибка! Поле "Месячный доход" должно быть заполнено!');
             return;
         } 
