@@ -208,29 +208,31 @@ document.addEventListener('DOMContentLoaded', () => {
 
     AppData.prototype.reset = function () {
 
-        let inputTextData = document.querySelectorAll('.data input[type = text]'),
-            resultInputAll = document.querySelectorAll('.result input[type = text]');
-            
-            inputTextData.forEach(elem => {
-                elem.value = '';
-                elem.removeAttribute('disabled');
-                periodSelect.value = '0';
-                periodAmount.innerHTML = periodSelect.value; 
-            });
-            resultInputAll.forEach(elem => {
-                elem.value = '';
-            });
+    const inputTextData = document.querySelectorAll('.data input[type = text]'),
+        resultInputAll = document.querySelectorAll('.result input[type = text]'),
+        incItms = document.querySelectorAll('.expenses-items'),
+        expItms = document.querySelectorAll('.income-items');
         
-        for (let i = 1; i < expensesItems.length; i++) {
-            expensesItems[i].parentNode.remonveChild(expensesItems[i]);
-            incomeAdd.style.display = 'block';
-        }
-        
-        for (let i = 1; i < expensesItems.length; i++) {
-            expensesItems[i].parentNode.remonveChild(expensesItems[i]);
-            expensesAdd.style.display = 'block';
-        }
-        
+    inputTextData.forEach(elem => {
+        elem.value = '';
+        elem.removeAttribute('disabled');
+        periodSelect.value = '0';
+        periodAmount.innerHTML = periodSelect.value; 
+    });
+    resultInputAll.forEach(elem => {
+        elem.value = '';
+    });
+    
+    for (let i = 1; i < incItms.length; i++) {
+        incItms[i].parentNode.removeChild(incItms[i]);
+        incomeAdd.style.display = 'block';
+    }
+    
+    for (let i = 1; i < expItms.length; i++) {
+        expItms[i].parentNode.removeChild(expItms[i]);
+        expensesAdd.style.display = 'block';
+    }
+    
         this.budget = 0;
         this.income          = {};
         this.addIncome       = [],
@@ -250,9 +252,9 @@ document.addEventListener('DOMContentLoaded', () => {
         expensesAdd.removeAttribute('disabled');
         depositCheck.checked = false;
         depositBank.style.display = 'none';
-        depositAmount.removeAttribute('disabled');
-        depositPercent.removeAttribute('disabled');
-        };
+        depositAmount.style.display = 'none';
+        depositPercent.style.display = 'none';
+    };
 
     const appData = new AppData();
 
@@ -328,7 +330,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     cancelBtn.addEventListener('click', () => {
-        //TODO reset();
+        appData.reset();
     });
 
     expensesAdd.addEventListener('click', () => {
