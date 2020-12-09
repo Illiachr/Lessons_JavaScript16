@@ -50,6 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
         start() {
             if (salaryAmount.value === '') {
                 startBtn.setAttribute('disabled', 'true');
+                alert('Поле "Месячный доход" должно быть заполнено!');
                 return;
             }
 
@@ -64,12 +65,8 @@ document.addEventListener('DOMContentLoaded', () => {
             this.budget = +salaryAmount.value;
 
             this.getTransactions();
-            // this.getExpenses();
-            // this.getIncome();
-
             this.getExpensesMonth();
-            this.getAddExpenses();
-            this.getAddIncome();
+            this.getAdditional();
             this.getBudget();
             this.getInfoDeposit();
             this.showResult();
@@ -129,22 +126,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 this.incomeMonth += this.income[key];
             }
         }
-
-        getAddExpenses() {
-            const addExpenses = additionalExpenses.value.split(',');
-            addExpenses.forEach(item => {
-                item = item.trim();
-                if (item !== '') {
-                    this.addExpenses.push(item.toLowerCase());
+        getAdditional () {                        
+            const count = (item, key) => {                
+                if (item.trim() !== '') {
+                    this[key].push(item.trim().toLowerCase());
                 }
-            });
+            };
+            additionalIncome.forEach(item => count(item.value, 'addIncome'));
+            additionalExpenses.value.split(',').forEach(item => count(item, 'addExpenses'));
         }
-        getAddIncome() {
-            additionalIncome.forEach((item) => {
-                const itemValue = item.value.trim().toLowerCase();
-                this.addIncome.push(itemValue);
-            });
-        }
+
         getExpensesMonth() {
             for (const key in this.expenses) {
                 this.expensesMonth += +this.expenses[key];
