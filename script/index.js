@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
         periodSelect = document.querySelector('.period-select'),
         periodAmount = document.querySelector('.period-amount'),
         budgetMonthValue = document.querySelector('.budget_month-value'),
-        depositСalc = document.querySelectorAll('.deposit-calc');
+        depositLabel = document.querySelector('.deposit-label');
 
     class AppData {
         constructor() {
@@ -54,6 +54,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
+            // if (depositPercent.value !== '') {
+            //     if (depositPercent.value < 0 || depositPercent.value > 100) {
+            //         startBtn.setAttribute('disabled', 'true');
+            //         alert('Введите корректное значение в поле проценты');
+            //         return;
+            //     }
+            // }
+
             document.querySelectorAll('.data input[type="text"]').forEach(
                 item => item.setAttribute('disabled', 'true')
             );
@@ -67,8 +75,9 @@ document.addEventListener('DOMContentLoaded', () => {
             this.getTransactions();
             this.getExpensesMonth();
             this.getAdditional();
-            this.getBudget();
             this.getInfoDeposit();
+            this.getBudget();
+            
             this.showResult();
         }
         showResult() {
@@ -142,7 +151,8 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
         getBudget() {
-            this.budgetMonth = this.budget + this.incomeMonth - this.expensesMonth;
+            const depIncomeMth = this.deposit ? this.depositSum * (this.depositPercent/100) : 0;
+            this.budgetMonth = this.budget + this.incomeMonth - this.expensesMonth + depIncomeMth;
             this.budgetDay = Math.floor(this.budgetMonth / 30);
         }
         getTargetMonth() {
@@ -156,12 +166,50 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         // TODO предложение ввода данных по депозиту и предупреждение о пустых полях
         getInfoDeposit() {
-            if (this.deposit && depositAmount.value.trim() !== '' && depositPercent.value) {
+            if (this.deposit) {                
                 this.depositSum = +depositAmount.value;
-                this.depositPercent = +depositPercent.value;
+                this.depositPercent = depositBank.value === 'other'? +depositPercent.value :
+                                    +depositBank.value;
                 console.log(this);
             }
+
+
         }
+
+        changePercent() {
+            if(depositBank.value === 'other') {
+                depositPercent.style.display = 'inline';
+                this.depositPercent = +depositPercent.value;
+            } else { depositPercent.style.display = 'none';
+                    this.depositPercent = +depositBank.value;
+                    if (startBtn.disabled) { startBtn.disabled = false; }
+                }
+        }
+
+        depositHandler() {
+            depositBank.style.display = 'none';
+                depositAmount.style.display = 'none';
+                depositPercent.style.display = 'none';
+                depositAmount.value = '';
+                depositPercent.value = '';
+                this.deposit = false;
+                depositBank.removeEventListener('change', () => {
+                    this.changePercent();
+                });
+                startBtn.disabled = false;
+
+                if (depositCheck.checked) {
+                    startBtn.disabled = true;
+                    depositBank.style.display = 'inline';
+                    depositAmount.style.display = 'inline';
+                    this.deposit = true;
+                    depositBank.addEventListener('change', () => {
+                        this.changePercent();
+                    });
+                }
+
+        }
+
         calcPeriod() {
             return this.budgetMonth * periodSelect.value;
         }
@@ -215,8 +263,11 @@ document.addEventListener('DOMContentLoaded', () => {
             depositPercent.style.display = 'none';
         }
         validateInput() {
-            const inputText = document.querySelectorAll('.data input[placeholder="Наименование"]'),
-                inputNum = document.querySelectorAll('.data input[placeholder="Сумма"]');
+            const inputText = document.querySelectorAll('.data input[placeholder=Наименование]'),
+                inputNum = [
+                ...document.querySelectorAll('.data input[placeholder=Сумма]'),
+                ...document.querySelectorAll('.data input[placeholder=Процент]')
+            ];
 
             inputText.forEach(item => {
                 item.addEventListener('input', () => {
@@ -243,12 +294,26 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
         eventsListeners() {
-            startBtn.addEventListener('click', event => {
+            startBtn.addEventListener('click', () => {
                 this.start();
             });
 
             salaryAmount.addEventListener('click', () => {
                 startBtn.disabled = false;
+            });
+
+            depositPercent.addEventListener('blur', () => {
+                if (depositPercent.value > 0 && depositPercent.value < 100 || 
+                    depositBank.value !== 'other' ||
+                    !depositCheck.checked) {
+                    startBtn.disabled = false;
+                } else {
+                    alert('Введите корректное значение в поле проценты');
+                    startBtn.disabled = true;
+                }
+
+                // startBtn.disabled = depositPercent.value > 0 && depositPercent.value < 100 ? 
+                //                 false : true;
             });
 
             cancelBtn.addEventListener('click', () => {
@@ -266,18 +331,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 this.validateInput();
             });
 
-            document.querySelector('.deposit-label').addEventListener('click', () => {
-                depositBank.style.display = 'none';
-                depositAmount.style.display = 'none';
-                depositPercent.style.display = 'none';
-                this.deposit = false;
-
-                if (depositCheck.checked) {
-                    depositBank.style.display = 'block';
-                    depositAmount.style.display = 'inline';
-                    depositPercent.style.display = 'inline';
-                    this.deposit = true;
-                }
+            document.querySelector('.deposit-label').addEventListener('change', () => {
+                this.depositHandler();
             });
 
             periodSelect.addEventListener('input', () => {
