@@ -46,29 +46,14 @@ document.addEventListener('DOMContentLoaded', () => {
             this.budgetMonth = 0;
             this.expensesMonth = 0;
             this.incomeMonth = 0;
+            this.keyLS = 'dbCalc';
         }
         start() {
             if (salaryAmount.value === '') {
                 startBtn.setAttribute('disabled', 'true');
                 alert('Поле "Месячный доход" должно быть заполнено!');
                 return;
-            }
-
-            // if (depositPercent.value !== '') {
-            //     if (depositPercent.value < 0 || depositPercent.value > 100) {
-            //         startBtn.setAttribute('disabled', 'true');
-            //         alert('Введите корректное значение в поле проценты');
-            //         return;
-            //     }
-            // }
-
-            document.querySelectorAll('.data input[type="text"]').forEach(
-                item => item.setAttribute('disabled', 'true')
-            );
-            incomeAdd.setAttribute('disabled', 'true');
-            expensesAdd.setAttribute('disabled', 'true');
-            startBtn.style.display = 'none';
-            cancelBtn.style.display = 'block';
+            }           
 
             this.budget = +salaryAmount.value;
 
@@ -79,6 +64,8 @@ document.addEventListener('DOMContentLoaded', () => {
             this.getBudget();
             
             this.showResult();
+            this.setFormLock();           
+            this.storToLS();
         }
         showResult() {
             budgetMonthValue.value = this.budget;
@@ -164,7 +151,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     this.budgetDay > 0 && this.budgetDay <= 600 ?
                         'К сожалению у Вас уровень дохода ниже среднего' : 'Что-то пошло не так!';
         }
-        // TODO предложение ввода данных по депозиту и предупреждение о пустых полях
         getInfoDeposit() {
             if (this.deposit) {                
                 this.depositSum = +depositAmount.value;
@@ -172,8 +158,6 @@ document.addEventListener('DOMContentLoaded', () => {
                                     +depositBank.value;
                 console.log(this);
             }
-
-
         }
 
         changePercent() {
@@ -207,19 +191,98 @@ document.addEventListener('DOMContentLoaded', () => {
                         this.changePercent();
                     });
                 }
-
         }
 
         calcPeriod() {
-            return this.budgetMonth * periodSelect.value;
+            return Math.floor(this.budgetMonth * periodSelect.value);
         }
-        reset() {
 
+        setCookie(name, value, options = {}) {
+            options = {
+                path: '/',
+                ...options
+            };
+        
+            if (options.expires instanceof Date) {
+                options.expires = options.expires.toUTCString();
+            }
+        
+            let updatedCookie = `${encodeURIComponent(name)} = ${encodeURIComponent(value)}`;
+        
+            for (let optionKey in options) {
+                updatedCookie += "; " + optionKey;
+                let optionValue = options[optionKey];
+                if (optionValue !== true) {
+                    updatedCookie += "=" + optionValue;
+                }
+            }
+            document.cookie = updatedCookie;
+        }
+
+        getDataLS() {
+            return localStorage.getItem(this.keyLS) !== null ?
+                new Map (Object.entries(JSON.parse(localStorage.getItem(this.keyLS)))) :
+                false;
+        }
+
+        getCookies() {
+            return document.cookie !== '' ? 
+                new Map ([...document.cookie.split(";").map(item => 
+                    decodeURIComponent(item).trim().split('='))]) :
+                false;
+        }
+        
+
+        deleteCookie(name) {
+            this.setCookie(name, "", {
+            'max-age': -1
+            });
+        }
+
+        setFormLock () {
+            document.querySelectorAll('.data input[type="text"]').forEach(
+                item => item.setAttribute('disabled', 'true')
+            );
+            incomeAdd.setAttribute('disabled', 'true');
+            expensesAdd.setAttribute('disabled', 'true');
+            startBtn.style.display = 'none';
+            cancelBtn.style.display = 'inline';
+        }
+
+        loadData(){            
+            const dbCalcMap = this.getDataLS(),
+                dbCookiesMap = this.getCookies();
+                if (dbCalcMap !== false && dbCookiesMap !== false) {
+                    for(const [key, value] of dbCalcMap) {
+                        if (dbCookiesMap.has(key) && dbCookiesMap.get(key) === value) {
+                            document.querySelector(`.${key}`).value = value;                        
+                        } else { return this.reset(); }
+                    }
+                    this.setFormLock();
+                }                
+                        
+        }
+
+        storToLS() {
+            const resultInputAll = document.querySelectorAll('.result input[type = text]');
+            let storeData = {};
+            resultInputAll.forEach((item) => storeData[item.className.split(' ')[1]] = item.value);
+            for(let key in storeData){
+                this.setCookie(key, storeData[key], {'max-age': 720000});
+            }
+            this.setCookie('isLoad', true, {'max-age': 720000});
+            localStorage.dbCalc = JSON.stringify(storeData);
+
+        }
+
+        reset() {
             const inputTextData = document.querySelectorAll('.data input[type = text]'),
                 resultInputAll = document.querySelectorAll('.result input[type = text]'),
                 incItms = document.querySelectorAll('.expenses-items'),
-                expItms = document.querySelectorAll('.income-items');
-
+                expItms = document.querySelectorAll('.income-items');            
+            resultInputAll.forEach((item) => this.deleteCookie(item.className.split(' ')[1]));
+            this.deleteCookie('isLoad');
+            localStorage.removeItem('dbCalc');
             inputTextData.forEach(elem => {
                 elem.value = '';
                 elem.removeAttribute('disabled');
@@ -311,9 +374,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     alert('Введите корректное значение в поле проценты');
                     startBtn.disabled = true;
                 }
-
-                // startBtn.disabled = depositPercent.value > 0 && depositPercent.value < 100 ? 
-                //                 false : true;
             });
 
             cancelBtn.addEventListener('click', () => {
@@ -344,7 +404,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const appData = new AppData();
 
-    appData.validateInput();
+    appData.validateInput();    
+    appData.loadData();
+
     appData.eventsListeners();
     console.log(appData);
 });
